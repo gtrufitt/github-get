@@ -1,29 +1,38 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="reset.css">
   <style>
     body {
-          font-family: -apple-system, BlinkMacSystemFont, Helvetica,Arial,sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
     }
 
     img {
       max-width: 100%;
     }
 
-  a:visited {
+    a:visited {
       color: #444;
-  }
+    }
 
-  a:link {
+    a:link {
       color: #444;
-  }
+    }
 
-  .bold {
-    font-weight: bold;
-  }
+    .bold {
+      font-weight: bold;
+    }
+    .label {
+      display: inline-block;
+      padding: 5px 2px;
+      border-color: #cccccc;
+      background-color: #f6f6f6;
+      border-radius: 2px;
+      margin-right: 5px;
+    }
   </style>
 </head>
 
@@ -32,20 +41,38 @@
   <p>Gathered from {% for repo in repoNames %}{{repo}}{% if repo != repoNames.last %}, {%endif%}{% endfor %}</p>
   <ul>
     {% for pr in prs %}
-      <li>
-      <a class="bold" href="#{{ pr.title | url_encode }}">{{pr.title}}</a> <a href="{{ pr.url }}"><small>◎</small></a> <span style="font-size: 0.7em">({{pr.repoName}}{% if pr.merged %}, merged on {{pr.merged | date: "%a, %b %d, %Y, %H:%m"}}{% endif %})<span>
-      </li>
+    <li>
+      <a class="bold" href="#{{ pr.title | url_encode }}">
+        {{pr.title}}
+      </a>
+      <a href="{{ pr.url }}"><small>◎</small></a>
+      <span style="font-size: 0.7em">({{pr.repoName}}{% if pr.merged %}, merged on {{pr.merged | date: "%a, %b %d, %Y,
+        %H:%m"}}{% endif %})
+        {% for label in pr.labels %}
+        {% if label.name == ':cat2: online-ordering' %}
+        <span class="label" style="font-weight: bold; background-color: lightblue">Online Ordering</span>
+        {% else %}
+        <span class="label">{{label.name}}</span>
+        {%endif%}
+        {% endfor %}
+        <span>
+    </li>
     {% endfor %}
   </ul>
-  
-    {% for pr in prs %}
-        <div style="padding: 10px; border: 1px solid #ccc; background-color: #f6f6f6; margin-bottom: 20px; max-width: 1024px;" id={{ pr.title | url_encode}}>
-          <h2><a href="{{pr.url}}">{{ pr.title }}</a> <span style="font-size: 0.7em">({{pr.repoName}})<span></h2>
-          <p>Created on {{pr.created  | date: "%a, %b %d, %Y" }}<p>
-          {% if pr.merged %}<p>Merged on {{pr.merged | date: "%a, %b %d, %Y, %H:%m"}}</p>{% endif %}
-          {{ pr.body }}
-        </div>
-    {% endfor %}
+
+  {% for pr in prs %}
+  <div style="padding: 10px; border: 1px solid #ccc; background-color: #f6f6f6; margin-bottom: 20px; max-width: 1024px;"
+    id={{ pr.title | url_encode}}>
+    <h2><a href="{{pr.url}}">{{ pr.title }}</a> <span style="font-size: 0.7em">({{pr.repoName}})<span></h2>
+    <p>Created on {{pr.created | date: "%a, %b %d, %Y" }}
+    <p>
+      {% if pr.merged %}
+    <p>Merged on {{pr.merged | date: "%a, %b %d, %Y, %H:%m"}}</p>{% endif %}
+    <p>Created by {{pr.user.login}}</p>
+    {{ pr.body }}
+  </div>
+  {% endfor %}
 
 </body>
+
 </html>
